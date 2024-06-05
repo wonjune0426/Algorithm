@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.util.*;
 
@@ -18,6 +17,8 @@ public class Main {
             String s = br.readLine();
             L.add(s.split(" "));
         }
+        
+        br.close();
 
         // 단어들을 반대로 출력하기 위한 stack
         Stack<String> stack = new Stack<>();
