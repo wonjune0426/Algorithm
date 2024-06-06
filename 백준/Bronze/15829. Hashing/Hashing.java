@@ -10,14 +10,18 @@ public class Main {
         char[] text = br.readLine().toCharArray();
         br.close();
 
-        double sum = 0;
+        long sum = 0L, pow = 1L;
+        int m = 1234567891;
+
+        // https://gliver.tistory.com/5
 
         for (int i = 0; i < text.length; i++) {
             int n = text[i] - 96;
-            sum += n * Math.pow(31, i);
+            sum += (n * pow) % m;
+            pow = 31 * pow % m;
         }
 
-        bw.write(String.valueOf((int)sum));
+        bw.write(String.valueOf(sum%m));
         bw.flush();
         bw.close();
 
