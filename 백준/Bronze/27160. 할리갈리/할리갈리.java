@@ -1,22 +1,26 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
         int[] arr = new int[4];
         String result = "NO";
 
-        int N = sc.nextInt();
+        int N = Integer.parseInt(br.readLine());
 
         String[] card = new String[N];
         int[] cardCount = new int[N];
 
         for (int i = 0; i < N; i++) {
-            card[i] = sc.next();
-            cardCount[i] =sc.nextInt();
+            String s = br.readLine();
+            card[i] = s.split(" ")[0];
+            cardCount[i] = Integer.parseInt(s.split(" ")[1]);
         }
 
+        br.close();
+        
         for(int i=0;i<card.length;i++){
             switch (card[i]){
                 case "STRAWBERRY":
@@ -41,7 +45,9 @@ public class Main {
             }
         }
 
-        System.out.println(result);
+        bw.write(result);
+        bw.flush();
+        bw.close();
 
     }
 }
