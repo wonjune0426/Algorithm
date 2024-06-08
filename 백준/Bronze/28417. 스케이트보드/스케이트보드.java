@@ -1,9 +1,10 @@
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.StringTokenizer;
 
-public class Main{
+public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -12,16 +13,16 @@ public class Main{
 
         Integer[] scores = new Integer[N];
 
-        int max;
+        int sumScore = 0;
+
         for (int i = 0; i < N; i++) {
+            int run = 0;
             StringTokenizer st = new StringTokenizer(br.readLine(), " ");
 
             int first = Integer.parseInt(st.nextToken());
             int second = Integer.parseInt(st.nextToken());
 
-            if (first > second) max = first;
-            else if (first < second) max = second;
-            else max = first;
+            run = Math.max(first, second);
 
             Integer[] arr = new Integer[5];
             for (int s = 0; s < arr.length; s++) {
@@ -30,12 +31,10 @@ public class Main{
 
             Arrays.sort(arr, Collections.reverseOrder());
 
-            scores[i] = max + arr[0] + arr[1];
+            sumScore = Math.max(sumScore, run + arr[0] + arr[1]);
         }
 
-        Arrays.sort(scores, Collections.reverseOrder());
-
-        bw.write(scores[0]+"");
+        bw.write(sumScore + "");
         bw.flush();
         bw.close();
     }
