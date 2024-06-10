@@ -12,7 +12,7 @@ public class Main {
 
     private static StringTokenizer st;
 
-    // 각 위치의 탐색 여주 저장
+    // 각 위치의 탐색 여부 저장
     private static boolean[][] check;
 
     private static int map;
@@ -52,6 +52,7 @@ public class Main {
     }
 
     private static int bfs(int x, int y, int endX, int endY) {
+        // 시작지점 탐색여부 변경
         check[x][y] = true;
 
         // 시작 지점과 종료 지점이 같을 경우 0 리턴
@@ -59,24 +60,30 @@ public class Main {
 
         // bfs 탐색을 위한 queue
         Queue<int[]> q = new LinkedList<>();
+        // x좌표, y좌표, 탐색 횟수 저장
         q.add(new int[]{x, y, 0});
 
 
+        // queue가 빌 때까지 반복
         while (!q.isEmpty()) {
+            // q의 첫번째 배열을 가져옴
             int[] checkInfo = q.poll();
+            // 탐색횟수
             int count = checkInfo[2];
 
+            // 8가지의 이동가능 좌표 동안 반복
             for (int i = 0; i < move_X.length; i++) {
                 int check_X = move_X[i] + checkInfo[0];
                 int check_Y = move_Y[i] + checkInfo[1];
 
+                // X,Y 좌표가 음수이거나 지정한 범위를 초과하면 건너뜀
                 if (check_X < 0 || check_Y < 0 || check_X >= map || check_Y >= map) continue;
-                if (check[check_X][check_Y]) continue;
-                if (check_X == endX && check_Y == endY) {
+                if (check[check_X][check_Y]) continue; // 이미 탐색한 좌표는 건너뜀
+                if (check_X == endX && check_Y == endY) { // 탐색 중 목표 좌표가 나올경우 탐색 횟수 return
                     return count + 1;
                 }
-                check[check_X][check_Y] = true;
-                q.add(new int[]{check_X, check_Y, count + 1});
+                check[check_X][check_Y] = true; // 해당 좌표값 탐색 여부 변졍
+                q.add(new int[]{check_X, check_Y, count + 1}); //변경된 좌표를 queue에 저장
 
             }
 
