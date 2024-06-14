@@ -1,33 +1,30 @@
 import java.io.*;
 
-public class Main{
+public class Main {
     private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
     public static void main(String[] args) throws IOException {
+        // 지불한 돈
         int n = Integer.parseInt(br.readLine());
 
+        // 거스름돈의 갯수
         int count = 0;
 
-        int money = 1000 -n;
+        // 거스름돈 계산
+        int money = 1000 - n;
 
+        // 거스름돈의 종류
+        int[] coins = new int[]{500, 100, 50, 10, 5, 1};
 
-        count += money / 500;
-        money = money % 500;
+        // 거스름돈의 갯수 계산
+        for (int i = 0; i < coins.length; i++) {
+            count += money / coins[i];
+            money = money % coins[i];
 
-        count += money / 100;
-        money = money % 100;
+            if (money == 0) break; // 거스름돈을 계산한 금액이 0이면 탈출
+        }
 
-        count += money / 50;
-        money = money % 50;
-
-        count+= money / 10;
-        money = money % 10;
-
-        count += money / 5;
-        money = money % 5;
-
-        count += money;
 
         br.close();
         bw.write(count + "\n");
