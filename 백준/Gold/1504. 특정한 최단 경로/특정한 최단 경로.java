@@ -1,120 +1,117 @@
-import java.io.*;
-import java.util.*;
-
-
-public class Main {
-    static class Node implements Comparable<Node> {
-        private int index;
-        private int weight;
-
-        public Node(int index, int weight) {
-            this.index = index;
-            this.weight = weight;
-        }
-
-        @Override
-        public int compareTo(Node o) {
-            return Integer.compare(this.weight, o.weight);
-        }
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+ 
+class Node implements Comparable<Node> {
+    int end;
+    int weight;
+ 
+    Node(int end, int weight) {
+        this.end = end;
+        this.weight = weight;
     }
-
-    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    private static StringTokenizer st;
-
-    private static List<List<Node>> graph = new ArrayList<>();
-
-    private static int[] distance;  // 경로 저장 배열
-
-    private static int N;
-
-    public static void main(String[] args) throws IOException {
-
-        st = new StringTokenizer(br.readLine());
-
-        // 정점의 갯수
+ 
+    @Override
+    public int compareTo(Node o) {
+        return weight - o.weight;
+    }
+ 
+}
+ 
+public class Main {
+    static int N, E;
+    static ArrayList<ArrayList<Node>> a; // 인접리스트.
+    static int[] dist; // 시작점에서 각 정점으로 가는 최단거리.
+    static boolean[] check; // 방문 확인.
+    static final int INF = 200000000;
+ 
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
-
-        // graph 정점의 갯수 만큼 생성
-        for (int i = 0; i < N; i++) {
-            graph.add(new ArrayList<>());
+        E = Integer.parseInt(st.nextToken());
+ 
+        a = new ArrayList<>();
+        dist = new int[N + 1];
+        check = new boolean[N + 1];
+ 
+        Arrays.fill(dist, INF);
+ 
+        for (int i = 0; i <= N; i++) {
+            a.add(new ArrayList<>());
         }
-
-        // 경로 저장 배열 크기 지정 및 초기값 지정
-        distance = new int[N];
-
-        // 간성의 갯수
-        int E = Integer.parseInt(st.nextToken());
-
+ 
+        // 양방향 인접 리스트 구현.
         for (int i = 0; i < E; i++) {
             st = new StringTokenizer(br.readLine());
-
-            int start = Integer.parseInt(st.nextToken()) - 1; // 시작ㄴ드 (경로 저장시 index 0부터 시작이기 때문에 -1)
-            int end = Integer.parseInt(st.nextToken()) - 1;   // 도착노드 (경로 저장시 index 0부터 시작이기 때문에 -1)
-            int weight = Integer.parseInt(st.nextToken());    // 가중치
-
-            graph.get(start).add(new Node(end, weight));
-            graph.get(end).add(new Node(start, weight));
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
+ 
+            // start에서 end로 가는 weight (가중치)
+            a.get(start).add(new Node(end, weight));
+ 
+            // end에서 start로 가는 weight (가중치)
+            a.get(end).add(new Node(start, weight));
         }
-
+ 
+        // 반드시 거쳐야 하는 정점.
         st = new StringTokenizer(br.readLine());
-        int num1 = Integer.parseInt(st.nextToken()) - 1; // 거쳐야 하는 첫번째 노드
-        int num2 = Integer.parseInt(st.nextToken()) - 1; // 거쳐야 하는 두번째 노드
-
-
-        long sum1 = 0;
-
-        sum1 += Dijkstra(0, num1);
-        sum1 += Dijkstra(num1, num2);
-        sum1 += Dijkstra(num2, N - 1);
-
-        long sum2 = 0;
-
-        sum2 += Dijkstra(0, num2);
-        sum2 += Dijkstra(num2, num1);
-        sum2 += Dijkstra(num1, N - 1);
-
-        if (sum1 < Integer.MAX_VALUE && sum2 < Integer.MAX_VALUE) {
-            bw.write(String.valueOf(Math.min(sum1, sum2)));
-        } else {
-            bw.write("-1");
-        }
-
-
+        int v1 = Integer.parseInt(st.nextToken());
+        int v2 = Integer.parseInt(st.nextToken());
+ 
+        // 1 -> v1 -> v2 -> N으로 가는 경우
+        int res1 = 0;
+        res1 += dijkstra(1, v1);
+        res1 += dijkstra(v1, v2);
+        res1 += dijkstra(v2, N);
+ 
+        // 1 -> v2 -> v1 -> N으로 가는 경우
+        int res2 = 0;
+        res2 += dijkstra(1, v2);
+        res2 += dijkstra(v2, v1);
+        res2 += dijkstra(v1, N);
+ 
+        int ans = (res1 >= INF && res2 >= INF) ? -1 : Math.min(res1, res2);
+ 
+        bw.write(ans + "\n");
         bw.flush();
         bw.close();
+        br.close();
     }
-
-    private static int Dijkstra(int start, int end) {
+ 
+    // 다익스트라 알고리즘
+    public static int dijkstra(int start, int end) {
+        Arrays.fill(dist, INF);
+        Arrays.fill(check, false);
+ 
         PriorityQueue<Node> pq = new PriorityQueue<>();
-
-        // 가중치의 값을 최대로 초기화
-        Arrays.fill(distance, Integer.MAX_VALUE);
-
-        // 시작 노드의 index 0으로 지정
-        distance[start] = 0;
-
-        // Queue에 시작 노드 추가
-        pq.add(new Node(start, 0));
-
+        boolean[] check = new boolean[N + 1];
+        pq.offer(new Node(start, 0));
+        dist[start] = 0;
+ 
         while (!pq.isEmpty()) {
-            Node node = pq.poll();
-            int nodeIndex = node.index;
-            int weight = node.weight;
-
-            if (weight < distance[nodeIndex]) continue;
-
-            for (Node s : graph.get(nodeIndex)) {
-                if (weight + s.weight < distance[s.index]) {
-                    //최단 테이블 갱신
-                    distance[s.index] = weight + s.weight;
-                    // 갱신 된 노드를 우선순위 큐에 넣어
-                    pq.offer(new Node(s.index, distance[s.index]));
+            Node curNode = pq.poll();
+            int cur = curNode.end;
+ 
+            if (!check[cur]) {
+                check[cur] = true;
+ 
+                for (Node node : a.get(cur)) {
+                    if (!check[node.end] && dist[node.end] > dist[cur] + node.weight) {
+                        dist[node.end] = dist[cur] + node.weight;
+                        pq.add(new Node(node.end, dist[node.end]));
+                    }
                 }
             }
         }
-
-        return distance[end];
-
+ 
+        return dist[end];
     }
 }
