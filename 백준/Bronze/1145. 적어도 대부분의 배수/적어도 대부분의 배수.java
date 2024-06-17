@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 
 public class Main {
     private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
